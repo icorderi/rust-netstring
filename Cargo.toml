@@ -2,9 +2,9 @@
 name = "netstring"
 version = "0.0.1"
 authors = ["Ignacio Corderi <icorderi@msn.com>"]
-homepage = "https://icorderi.github.io/yacli/"
-repository = "https://github.com/icorderi/yacli/"
-documentation = "https://icorderi.github.io/yacli/doc/yacli/"
+homepage = "https://icorderi.github.io/netstring/"
+repository = "https://github.com/icorderi/rust-netstring/"
+documentation = "https://icorderi.github.io/netstring/doc/netstring/"
 description = "Library for encoding and decoding netstrings"
 keywords = [ "network", "protocol", "netstring" ]
 readme = "README.md"

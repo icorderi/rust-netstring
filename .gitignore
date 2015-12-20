@@ -1,0 +1,8 @@
+# Rust
+target
+
+# Rust - ignore lock for library
+Cargo.lock
+
+# IDE - Visual Studio Code
+.vscode

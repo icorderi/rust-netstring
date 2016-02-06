@@ -21,7 +21,7 @@
 // author: Ignacio Corderi
 
 use ::std::io::{Read, Write, Result};
-use ::std::io::{Error,ErrorKind};
+use ::std::io::{Error, ErrorKind};
 
 // TODO: get rid of this
 const DIGIT_LIMIT:usize = 64;
@@ -89,7 +89,10 @@ impl<R: Read> NetstringReader<R> {
         let mut current = 0usize;
         let mut done = false;
         while !done {
-            try!(self.inner.read(t[current..current+1].as_mut()));
+            let r = try!(self.inner.read(t[current..current+1].as_mut()));
+            if r == 0 {
+                return Err(Error::new(ErrorKind::ConnectionAborted, "Connection closed by target."));
+            }
             if t[current] == 0x3A {
                 done = true;
             } else {

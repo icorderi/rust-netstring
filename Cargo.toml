@@ -1,6 +1,6 @@
 [package]
 name = "netstring"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["Ignacio Corderi <icorderi@msn.com>"]
 homepage = "https://icorderi.github.io/yacli/"
 repository = "https://github.com/icorderi/yacli/"

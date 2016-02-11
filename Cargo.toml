@@ -1,6 +1,6 @@
 [package]
 name = "netstring"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Ignacio Corderi <icorderi@msn.com>"]
 homepage = "https://icorderi.github.io/netstring/"
 repository = "https://github.com/icorderi/rust-netstring/"

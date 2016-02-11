@@ -73,9 +73,14 @@ impl<R: Read> NetstringReader<R> {
         }
 
         // TODO: there has to be a a cleaner way to do this...
-        // read tail ","
+        // read delimiter ","
         let mut t = vec![0u8].into_boxed_slice();
         try!(self.inner.read(t[..].as_mut()));
+
+        // Verify delimiter
+        if t[0] != b","[0] {
+            return Err(Error::new(ErrorKind::InvalidData, "Expected `,` delimiter."));
+        }
 
         // return utf8 string
         match String::from_utf8(data) {
@@ -114,4 +119,41 @@ impl<R: Read> NetstringReader<R> {
         Ok(ln as usize)
     }
 
+}
+
+#[cfg(test)]
+mod tests {
+    use super::NetstringReader;
+
+    #[test]
+    fn basic() {
+        let raw = "5:hello,".as_bytes();
+        let mut r = NetstringReader::new(raw);
+        let x = r.read_netstring().unwrap();
+        assert_eq!("hello", x);
+    }
+
+    #[test]
+    #[should_panic(expected="Expected `,` delimiter.")]
+    fn invalid_delimiter() {
+        let raw = "5:hello?".as_bytes();
+        let mut r = NetstringReader::new(raw);
+        r.read_netstring().unwrap();
+    }
+
+    #[test]
+    #[should_panic(expected="Expected `,` delimiter.")]
+    fn longer() {
+        let raw = "10:hello,".as_bytes();
+        let mut r = NetstringReader::new(raw);
+        r.read_netstring().unwrap();
+    }
+
+    #[test]
+    #[should_panic(expected="Expected `,` delimiter.")]
+    fn shorter() {
+        let raw = "2:hello,".as_bytes();
+        let mut r = NetstringReader::new(raw);
+        r.read_netstring().unwrap();
+    }
 }

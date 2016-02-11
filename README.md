@@ -58,3 +58,6 @@ Get involved with the [issues] or submit a [PR].
 This project is licensed under The MIT License (MIT)
 * [Markdown](LICENSE/mit.md) version
 * [Original](LICENSE/mit.txt) version
+
+
+[![ZenHub] (https://raw.githubusercontent.com/ZenHubIO/support/master/zenhub-badge.png)] (https://zenhub.io)

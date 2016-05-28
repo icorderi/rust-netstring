@@ -1,13 +1,31 @@
 language: rust
+rust: stable
+
+sudo: false
+
+notifications:
+  email:
+    on_success: never
+    on_failure: never
+
+branches:
+  only:
+  - master
+
+before_script:
+- |
+  pip install 'travis-cargo<0.2' --user &&
+  export PATH=$HOME/.local/bin:$PATH
+
+script:
+- travis-cargo build
+- travis-cargo test
+- travis-cargo doc
+
+after_success:
+- travis-cargo doc-upload
+- travis-cargo coveralls --no-sudo --verify
 
 env:
   global:
-    secure: lM8sY8wJcIpeSxi6V0pkj88qwdbae3NVjQu/xKvQ5NMXedrqqvRU5fWhO9tRh8mLh8od7pmjNIKUpcgKkyD837mFRyXik1KRdTb5Gp3ti1+1Q7JNzCerwAJB7U6wIywsd4R9ZVlTKM4xk35loEBhyKkETslDBQ3n07kn5hX7cVk=
-
-script:
-  - cargo build --release --verbose
-  - cargo test --verbose
-  - cargo doc --no-deps --verbose
-
-after_success:
-  - bash .travis-update-gh-pages.sh
+    secure: Uf4GFlItmqudFWY1tPMGRNF2D4RYiyfSLGi2EFPLD3qn9F+YnO2Nv//RE9k5EDgCQfT7Zgc3753mctgxfSwc5+Oe7uOL7M4j6MVuTg3T3RjUjqeHJN2fIPXYDGUR+b9GBtrnv3y8VSBKebFD3CLPaMM7AM3PRZwazQ1SJvWt66G/0GpnAIjGnQpKf6NE91EOwi/hwj1/OmzysR3/dYNmtcF/q+EfjDZuZ0uATKwRh/64ITuSGZry2Oc/4pExBbceJupTWiWfYbDgWnhQIGGgkya5ZtSpec7+ua3V3yeOy5mmbwcPwT5u7V6Su4L6K197ZivUmRsNnX2zvHGOOgUgYV172bt4Rqb6Wv3wVnZWuFjULD70gqElolPYHKM+NlSz2JoDCFwmD8psaXqF5rSKMZUmFLoW/5jGA5AOKcH+0rJFUC7NIbGJLcswdBNUdN0eBeNJr7jg5d5/0Mm3xA9XJCjMVCh0ebS/8qXxXEoPzsOcrDumQfhk/P01//dUQx/WBJ8y3WDUrbiVQIUWZjqbhjSVoX4qttVocuKRTU2P5xEEFqrdd104TOKzGJtQlbBSKHjreGOLEO6ZFHgBwqRfDI6NtrjRpnpq4sitbrgTkZgurBpijMePKca3FZQZLkX46GnMBwqtSnH7Hcqxh9xpnuZxDDVS8WqGAm0y4oZChcI=

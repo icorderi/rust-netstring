@@ -1,63 +1,25 @@
-# Netstring
-[![Travis](https://img.shields.io/travis/icorderi/rust-netstring.svg)](https://travis-ci.org/icorderi/rust-netstring)
-[![Crates.io](https://img.shields.io/crates/v/netstring.svg)](https://crates.io/crates/netstring)
-[![Crates.io](https://img.shields.io/crates/l/netstring.svg)](https://github.com/icorderi/rust-netstring/blob/master/LICENSE/mit.md)
+# rust-netstring
+
+## Dashboard
+
+| Linux CI | Test Coverage | Crate | Documentation |
+|:--------:|:-------------:|:-----:|:-------------:|
+| [![Build Status](https://travis-ci.org/icorderi/rust-netstring.svg?branch=master)](https://travis-ci.org/icorderi/rust-netstring) | [![Coverage Status](https://coveralls.io/repos/icorderi/rust-netstring/badge.svg?branch=master)](https://coveralls.io/r/icorderi/rust-netstring?branch=master) | [![Crate](http://meritbadge.herokuapp.com/netstring)](https://crates.io/crates/netstring) | [![Docs](https://img.shields.io/badge/docs-up--to--date-blue.svg)](https://icorderi.github.io/rust-netstring/index.html)
 
 ## Getting Started
 
-### Adding the dependency
-
-To use the latest stable **netstring** [crate] add this to your `Cargo.toml`:
-
-```toml
-[dependencies.netstring]
-```
-
-or
-
-```toml
-[dependencies]
-netstring = "*"
-```
-
-or if you want to link it to the GitHub repo add this instead:
-
-```toml
-[dependencies.shell]
-    git = "https://github.com/icorderi/rust-netstring"
-```
-
-> **Note:** For more information on handling [dependencies] check the official cargo site.
-
-[crate]: https://crates.io/crates/netstring
-[dependencies]: http://doc.crates.io/guide.html#adding-dependencies
-
-### Importing yacli
-
-To import **netstring** add this to your code:
-
-```rust
-extern crate netstring;
-```
-
-## Documentation
-
-If you need help don't forget to checkout the online [documentation] for the library.
-
-[documentation]: http://icorderi.github.io/rust-netstring/doc/netstring
-
-## Contributing
-
-Get involved with the [issues] or submit a [PR].
-
-[issues]: https://github.com/icorderi/rust-netstring/issues
-[PR]: https://github.com/icorderi/rust-netstring/pulls
-
 ## License
 
-This project is licensed under The MIT License (MIT)
-* [Markdown](LICENSE/mit.md) version
-* [Original](LICENSE/mit.txt) version
+Licensed under:
+
+- Apache License, Version 2.0 - [LICENSE-APACHE](LICENSE-APACHE) ([source](http://www.apache.org/licenses/LICENSE-2.0))
+- MIT license - ([LICENSE-MIT](LICENSE-MIT) ([source](http://opensource.org/licenses/MIT))
+
+## Contribution
+
+Unless you explicitly state otherwise, any contribution intentionally submitted
+for inclusion in the work by you, as defined in the Apache-2.0 license, shall be dual licensed as above, without any
+additional terms or conditions.
 
 
 [![ZenHub] (https://raw.githubusercontent.com/ZenHubIO/support/master/zenhub-badge.png)] (https://zenhub.io)

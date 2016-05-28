@@ -1,5 +1,7 @@
 # rust-netstring
 
+Library for encoding and decoding netstrings
+
 ## Dashboard
 
 | Linux CI | Test Coverage | Crate | Documentation |

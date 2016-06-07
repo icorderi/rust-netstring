@@ -1,4 +1,4 @@
-use ::std::io::{Read, Write, Result, BufWriter};
+use ::std::io::{Read, Write, Result};
 use ::std::io::{Error, ErrorKind};
 
 // TODO: get rid of this
@@ -48,16 +48,9 @@ impl<R: Read> ReadNetstring for R {
 
 impl<W: Write> WriteNetstring for W {
     fn write_netstring<S: AsRef<str>>(&mut self, value: S) -> Result<()> {
-        let mut w = BufWriter::new(self);
-
         let value = value.as_ref();
-        let s = format!("{}:", value.len());
-        try!(w.write(s.as_bytes()));
-        try!(w.write(value.as_bytes()));
-        try!(w.write(b","));
-
-        try!(w.flush());
-
+        let s = format!("{}:{},", value.len(), value);
+        try!(self.write(s.as_bytes()));
         Ok(())
     }
 }

@@ -34,7 +34,7 @@ impl<R: Read> ReadNetstring for R {
         try!(self.read(t[..].as_mut()));
 
         // Verify delimiter
-        if t[0] != b","[0] {
+        if t[0] != b',' {
             return Err(Error::new(ErrorKind::InvalidData, "Expected `,` delimiter."));
         }
 
@@ -50,7 +50,7 @@ impl<W: Write> WriteNetstring for W {
     fn write_netstring<S: AsRef<str>>(&mut self, value: S) -> Result<()> {
         let value = value.as_ref();
         let s = format!("{}:{},", value.len(), value);
-        try!(self.write(s.as_bytes()));
+        try!(self.write_all(s.as_bytes()));
         Ok(())
     }
 }
@@ -64,7 +64,8 @@ fn read_length<R: Read>(r: &mut R) -> Result<usize> {
         if r == 0 {
             return Err(Error::new(ErrorKind::ConnectionAborted, "Connection closed by target."));
         }
-        if t[current] == 0x3A {
+        // Reached ":" signaling the end of the length
+        if t[current] == b':' {
             done = true;
         } else {
             current += 1;
@@ -122,5 +123,16 @@ mod tests {
     fn shorter() {
         let mut raw = "2:hello,".as_bytes();
         raw.read_netstring().unwrap();
+    }
+
+    #[test]
+    fn multiple() {
+        let mut raw = "5:hello,5:world,10:xxxxxxxxxx,".as_bytes();
+        let x1 = raw.read_netstring().unwrap();
+        let x2 = raw.read_netstring().unwrap();
+        let x3 = raw.read_netstring().unwrap();
+        assert_eq!(x1,"hello");
+        assert_eq!(x2,"world");
+        assert_eq!(x3,"xxxxxxxxxx");
     }
 }

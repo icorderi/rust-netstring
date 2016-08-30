@@ -25,13 +25,16 @@ enum Op {
 }
 
 impl Channel {
-    pub fn new<R, W>(mut reader: R,
-                     mut writer: W,
-                     incoming: SyncSender<String>,
-                     outgoing_capacity: usize)
-                     -> Self
+    pub fn map<R, W, F, U>(mut reader: R,
+                           mut writer: W,
+                           incoming: SyncSender<U>,
+                           outgoing_capacity: usize,
+                           f: F)
+                           -> Self
         where R: ReadNetstring + Send + 'static,
-              W: WriteNetstring + Send + 'static
+              W: WriteNetstring + Send + 'static,
+              F: Fn(String) -> Option<U> + Send + 'static,
+              U: Send + 'static
     {
         let (out_tx, out_rx) = sync_channel(outgoing_capacity);
 
@@ -45,12 +48,14 @@ impl Channel {
                     trace!("Waiting for result...");
                     match reader.read_netstring() {
                         Ok(msg) => {
-                            if let Err(_) = incoming.send(msg) {
-                                // This can happen when *incoming* is dropped
-                                debug!("Received message but nobody is listening");
-                                // TODO: try to send error to caller
-                                break;
-                            }
+                            if let Some(x) = f(msg) {
+                                if let Err(_) = incoming.send(x) {
+                                    // This can happen when *incoming* is dropped
+                                    debug!("Received message but nobody is listening");
+                                    // TODO: try to send error to caller
+                                    break;
+                                }
+                            } // else - we were told to ignore the msg
                         }
                         Err(ref err) if err.kind() == IOErrorKind::ConnectionAborted => {
                             debug!("Connection aborted, closing reader");
@@ -104,6 +109,13 @@ impl Channel {
         }
 
         Channel { outgoing: out_tx, stop: stop }
+    }
+
+    pub fn new<R, W>(reader: R, writer: W, incoming: SyncSender<String>, outgoing_capacity: usize) -> Self
+        where R: ReadNetstring + Send + 'static,
+              W: WriteNetstring + Send + 'static
+    {
+        Channel::map(reader, writer, incoming, outgoing_capacity, |x| Some(x))
     }
 
     pub fn send<S: Into<String>>(&self, msg: S) -> Result<(), ChannelError> {

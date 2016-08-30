@@ -1,3 +1,10 @@
+#[macro_use]
+extern crate log;
+
+pub mod channel;
+#[cfg(test)]
+mod syncbuf;
+
 use ::std::io::{Read, Write, Result};
 use ::std::io::{Error, ErrorKind};
 
@@ -60,7 +67,7 @@ fn read_length<R: Read>(r: &mut R) -> Result<usize> {
     let mut current = 0usize;
     let mut done = false;
     while !done {
-        let r = try!(r.read(t[current..current+1].as_mut()));
+        let r = try!(r.read(t[current..current + 1].as_mut()));
         if r == 0 {
             return Err(Error::new(ErrorKind::ConnectionAborted, "Connection closed by target."));
         }
@@ -73,14 +80,14 @@ fn read_length<R: Read>(r: &mut R) -> Result<usize> {
     }
 
     let s = match String::from_utf8(t[..current].to_vec()) {
-                Ok(s)  => s,
-                Err(err) => return Err(Error::new(ErrorKind::InvalidData, err)),
-            };
+        Ok(s) => s,
+        Err(err) => return Err(Error::new(ErrorKind::InvalidData, err)),
+    };
 
     let ln = match s.parse::<u64>() {
-                Ok(x)  => x,
-                Err(err) => return Err(Error::new(ErrorKind::InvalidData, err)),
-                };
+        Ok(x) => x,
+        Err(err) => return Err(Error::new(ErrorKind::InvalidData, err)),
+    };
 
 
     Ok(ln as usize)
@@ -131,8 +138,8 @@ mod tests {
         let x1 = raw.read_netstring().unwrap();
         let x2 = raw.read_netstring().unwrap();
         let x3 = raw.read_netstring().unwrap();
-        assert_eq!(x1,"hello");
-        assert_eq!(x2,"world");
-        assert_eq!(x3,"xxxxxxxxxx");
+        assert_eq!(x1, "hello");
+        assert_eq!(x2, "world");
+        assert_eq!(x3, "xxxxxxxxxx");
     }
 }

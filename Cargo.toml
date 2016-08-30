@@ -1,11 +1,17 @@
 [package]
 name = "netstring"
-version = "0.2.2"
+version = "0.3.0"
 authors = ["Ignacio Corderi <icorderi@msn.com>"]
+
+keywords = [ "netstring", "network", "encoding" ]
+description = "Library for encoding and decoding netstrings"
+
 homepage = "https://icorderi.github.io/netstring/"
 repository = "https://github.com/icorderi/rust-netstring/"
 documentation = "https://icorderi.github.io/netstring/doc/netstring/"
-description = "Library for encoding and decoding netstrings"
-keywords = [ "netstring", "network", "encoding" ]
+
 readme = "README.md"
 license = "MIT/Apache-2.0"
+
+[dependencies]
+log = "0.3"

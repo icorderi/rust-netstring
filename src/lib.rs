@@ -17,6 +17,7 @@ pub trait ReadNetstring {
 
 pub trait WriteNetstring {
     fn write_netstring<S: AsRef<str>>(&mut self, value: S) -> Result<()>;
+    fn flush(&mut self) -> Result<()>;
 }
 
 impl<R: Read> ReadNetstring for R {
@@ -59,6 +60,10 @@ impl<W: Write> WriteNetstring for W {
         let s = format!("{}:{},", value.len(), value);
         try!(self.write_all(s.as_bytes()));
         Ok(())
+    }
+
+    fn flush(&mut self) -> Result<()> {
+        Write::flush(self)
     }
 }
 

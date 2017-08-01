@@ -1,5 +1,8 @@
-use ::std::sync::{Arc, RwLock};
-use ::std::io::{self, Write};
+use std::sync::{Arc, RwLock};
+use std::io::{self, Write};
+use std::net::Shutdown as ShutdownMode;
+
+use Shutdown;
 
 #[derive(Clone)]
 pub struct SyncBuf {
@@ -23,5 +26,11 @@ impl Write for SyncBuf {
     fn flush(&mut self) -> io::Result<()> {
         let mut inner = self.inner.write().unwrap();
         inner.flush()
+    }
+}
+
+impl Shutdown for SyncBuf {
+    fn shutdown(&self, _how: ShutdownMode) -> io::Result<()> {
+        Ok(())
     }
 }

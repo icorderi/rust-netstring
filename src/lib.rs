@@ -5,22 +5,28 @@ pub mod channel;
 #[cfg(test)]
 mod syncbuf;
 
-use ::std::io::{Read, Write, Result};
-use ::std::io::{Error, ErrorKind};
+use std::io::{Read, Write, Result};
+use std::io::{Error, ErrorKind};
+use std::net::Shutdown as ShutdownMode;
+use std::ops::Deref;
 
 // TODO: get rid of this
 const DIGIT_LIMIT: usize = 64;
 
-pub trait ReadNetstring {
+pub trait ReadNetstring: Shutdown {
     fn read_netstring(&mut self) -> Result<String>;
 }
 
-pub trait WriteNetstring {
+pub trait WriteNetstring: Shutdown {
     fn write_netstring<S: AsRef<str>>(&mut self, value: S) -> Result<()>;
     fn flush(&mut self) -> Result<()>;
 }
 
-impl<R: Read> ReadNetstring for R {
+pub trait Shutdown {
+    fn shutdown(&self, how: ShutdownMode) -> Result<()>;
+}
+
+impl<R: Read + Shutdown> ReadNetstring for R {
     fn read_netstring(&mut self) -> Result<String> {
         let ln = try!(read_length(self));
         let mut data = vec![0u8;ln];
@@ -54,7 +60,7 @@ impl<R: Read> ReadNetstring for R {
     }
 }
 
-impl<W: Write> WriteNetstring for W {
+impl<W: Write + Shutdown> WriteNetstring for W {
     fn write_netstring<S: AsRef<str>>(&mut self, value: S) -> Result<()> {
         let value = value.as_ref();
         let s = format!("{}:{},", value.len(), value);
@@ -64,6 +70,42 @@ impl<W: Write> WriteNetstring for W {
 
     fn flush(&mut self) -> Result<()> {
         Write::flush(self)
+    }
+}
+
+impl Shutdown for ::std::os::unix::net::UnixStream {
+    fn shutdown(&self, how: ShutdownMode) -> Result<()> {
+        ::std::os::unix::net::UnixStream::shutdown(self, how)
+    }
+}
+
+impl Shutdown for ::std::net::TcpStream {
+    fn shutdown(&self, how: ShutdownMode) -> Result<()> {
+        ::std::net::TcpStream::shutdown(self, how)
+    }
+}
+
+impl<T: Shutdown> Shutdown for Box<T> {
+    fn shutdown(&self, how: ShutdownMode) -> Result<()> {
+        self.deref().shutdown(how)
+    }
+}
+
+impl<'a> Shutdown for &'a [u8] {
+     fn shutdown(&self, _how: ShutdownMode) -> Result<()> {
+         Ok(())
+     }
+}
+
+impl<T> Shutdown for Vec<T> {
+     fn shutdown(&self, _how: ShutdownMode) -> Result<()> {
+         Ok(())
+     }
+}
+
+impl Shutdown for ::std::io::Sink {
+    fn shutdown(&self, _how: ShutdownMode) -> Result<()> {
+        Ok(())
     }
 }
 

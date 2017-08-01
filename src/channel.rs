@@ -4,6 +4,7 @@ use ::std::sync::mpsc::{sync_channel, SyncSender, SendError, RecvError};
 use ::std::sync::atomic::{AtomicBool, Ordering};
 use ::std::thread;
 use ::std::error::Error;
+use ::std::net::Shutdown;
 
 use {ReadNetstring, WriteNetstring};
 
@@ -67,6 +68,7 @@ impl Channel {
                         }
                     }
                 }
+                reader.shutdown(Shutdown::Both).ok();
                 trace!("Reader loop ended");
             });
         }
@@ -104,6 +106,7 @@ impl Channel {
                         }
                     }
                 }
+                writer.shutdown(Shutdown::Both).ok();
                 trace!("Writer loop ended");
             });
         }

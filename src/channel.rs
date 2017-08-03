@@ -53,22 +53,23 @@ impl Channel {
                                 if let Err(_) = incoming.send(x) {
                                     // This can happen when *incoming* is dropped
                                     debug!("Received message but nobody is listening");
-                                    // TODO: try to send error to caller
+                                    reader.shutdown(Shutdown::Both).ok();
                                     break;
                                 }
                             } // else - we were told to ignore the msg
                         }
                         Err(ref err) if err.kind() == IOErrorKind::ConnectionAborted => {
                             debug!("Connection aborted, closing reader");
+                            reader.shutdown(Shutdown::Both).ok();
                             break;
                         }
                         Err(err) => {
                             error!("Error reading netstring from socket. {}", err);
+                            reader.shutdown(Shutdown::Both).ok();
                             break;
                         }
                     }
                 }
-                reader.shutdown(Shutdown::Both).ok();
                 trace!("Reader loop ended");
             });
         }
@@ -98,15 +99,16 @@ impl Channel {
                             if let Ok(_) = writer.flush() {
                                 c.send(()).ok();
                             }
+                            // We are leaving without shutting down
                             break;
                         }
                         Err(_) => {
                             trace!("Channel closed");
+                            writer.shutdown(Shutdown::Both).ok();
                             break;
                         }
                     }
                 }
-                writer.shutdown(Shutdown::Both).ok();
                 trace!("Writer loop ended");
             });
         }
